@@ -22,8 +22,6 @@
 */
 #include "mcp_can.h"
 
-//#define DEBUG_MODE
-
 #define spi_readwrite SPI.transfer
 #define spi_read() spi_readwrite(0x00)
 
@@ -446,34 +444,21 @@ INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed, const INT8U clock)            
     res = mcp2515_setCANCTRL_Mode(MODE_CONFIG);
     if(res > 0)
     {
-#if DEBUG_MODE
-      Serial.print("Enter setting mode fall\r\n"); 
-#else
+      Logger.println("Enter setting mode fail!!");
       delay(10);
-#endif
       return res;
     }
-#if DEBUG_MODE
-    Serial.print("Enter setting mode success \r\n");
-#else
+    Logger.println("Enter setting mode Logger.");
     delay(10);
-#endif
-
                                                                         /* set boadrate                 */
     if (mcp2515_configRate(canSpeed, clock))
     {
-#if DEBUG_MODE
-      Serial.print("set rate fall!!\r\n");
-#else
+      Logger.println("Set rate fail!!");
       delay(10);
-#endif
       return res;
     }
-#if DEBUG_MODE
-    Serial.print("set rate success!!\r\n");
-#else
+    Logger.println("Set rate Logger.");
     delay(10);
-#endif
 
     if ( res == MCP2515_OK ) {
 
@@ -506,22 +491,14 @@ INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed, const INT8U clock)            
 #endif
                                                                         /* enter normal mode            */
         res = mcp2515_setCANCTRL_Mode(MODE_NORMAL);                                                                
-        if (res)
-        {
-#if DEBUG_MODE        
-          Serial.print("Enter Normal Mode Fall!!\r\n");
-#else
-            delay(10);
-#endif           
+        if (res) {
+          Logger.println("Enter Normal Mode fail!!");
+          delay(10);
           return res;
         }
 
-
-#if DEBUG_MODE
-          Serial.print("Enter Normal Mode Success!!\r\n");
-#else
-            delay(10);
-#endif
+        Logger.println("Enter Normal Mode Logger.");
+        delay(10);
 
     }
     return res;
@@ -694,19 +671,13 @@ INT8U MCP_CAN::begin(INT8U speedset, const INT8U clockset)
 INT8U MCP_CAN::init_Mask(INT8U num, INT8U ext, INT32U ulData)
 {
     INT8U res = MCP2515_OK;
-#if DEBUG_MODE
-    Serial.print("Begin to set Mask!!\r\n");
-#else
+    Logger.println("Begin to set Mask");
     delay(10);
-#endif
     res = mcp2515_setCANCTRL_Mode(MODE_CONFIG);
-    if(res > 0){
-#if DEBUG_MODE
-    Serial.print("Enter setting mode fall\r\n"); 
-#else
-    delay(10);
-#endif
-    return res;
+    if (res > 0) {
+        Logger.println("Enter setting mode fail!!");
+        delay(10);
+        return res;
     }
     
     if (num == 0){
@@ -719,19 +690,13 @@ INT8U MCP_CAN::init_Mask(INT8U num, INT8U ext, INT32U ulData)
     else res =  MCP2515_FAIL;
     
     res = mcp2515_setCANCTRL_Mode(MODE_NORMAL);
-    if(res > 0){
-#if DEBUG_MODE
-    Serial.print("Enter normal mode fall\r\n"); 
-#else
+    if (res > 0) {
+        Logger.println("Enter normal mode fail!!");
+        delay(10);
+        return res;
+    }
+    Logger.println("Set Mask Logger.");
     delay(10);
-#endif
-    return res;
-  }
-#if DEBUG_MODE
-    Serial.print("set Mask success!!\r\n");
-#else
-    delay(10);
-#endif
     return res;
 }
 
@@ -742,22 +707,15 @@ INT8U MCP_CAN::init_Mask(INT8U num, INT8U ext, INT32U ulData)
 INT8U MCP_CAN::init_Filt(INT8U num, INT8U ext, INT32U ulData)
 {
     INT8U res = MCP2515_OK;
-#if DEBUG_MODE
-    Serial.print("Begin to set Filter!!\r\n");
-#else
+    Logger.println("Begin to set Filter");
     delay(10);
-#endif
     res = mcp2515_setCANCTRL_Mode(MODE_CONFIG);
-    if(res > 0)
-    {
-#if DEBUG_MODE
-      Serial.print("Enter setting mode fall\r\n"); 
-#else
-      delay(10);
-#endif
-      return res;
+    if (res > 0) {
+        Logger.print("Enter setting mode fail!!");
+        delay(10);
+        return res;
     }
-    
+
     switch( num )
     {
         case 0:
@@ -791,19 +749,14 @@ INT8U MCP_CAN::init_Filt(INT8U num, INT8U ext, INT32U ulData)
     res = mcp2515_setCANCTRL_Mode(MODE_NORMAL);
     if(res > 0)
     {
-#if DEBUG_MODE
-      Serial.print("Enter normal mode fall\r\nSet filter fail!!\r\n"); 
-#else
-      delay(10);
-#endif
-      return res;
+        Logger.println("Enter normal mode fail!!");
+        Logger.println("Set filter fail!!");
+        delay(10);
+        return res;
     }
-#if DEBUG_MODE
-    Serial.print("set Filter success!!\r\n");
-#else
+    Logger.println("Set Filter Logger.");
     delay(10);
-#endif
-    
+
     return res;
 }
 

@@ -14,32 +14,7 @@
 #include <SPI.h>
 #include "mcp_can.h"
 #include "can-232.h"
-
-#define LOGGING_ENABLED
-
-#ifdef LOGGING_ENABLED
-#define dbg_begin(x) debug.begin(x)
-#define dbg0(x)   debug.print(x)
-#define dbg1(x)   debug.println(x)
-#define dbg2(x,y) debug.print(x); debug.println(y)
-#define dbgH(x)   debug.print(x,HEX)
-#define DEBUG_RX_PIN 8
-#define DEBUG_TX_PIN 9
-#else
-#define dbg_begin(x)
-#define dbg0(x) 
-#define dbg1(x) 
-#define dbg2(x,y)
-#define dbgH(x)
-#endif
-
-#ifdef LOGGING_ENABLED
-    // software serial #2: TX = digital pin 8, RX = digital pin 9
-    // on the Mega, use other pins instead, since 8 and 9 don't work on the Mega
-  
-      SoftwareSerial debug(DEBUG_RX_PIN, DEBUG_TX_PIN);
-  //#define debug Serial
-#endif
+#include "debug.h"
 
 Can232* Can232::_instance = 0;
 
@@ -50,8 +25,7 @@ Can232* Can232::instance() {
 }
 
 void Can232::init(INT8U defaultCanSpeed, const INT8U clock) {
-    dbg_begin(LW232_DEFAULT_BAUD_RATE); // logging through software serial 
-    dbg1("CAN ASCII. Welcome to debug");
+    Logger.println("CAN ASCII. Welcome to debug");
 
     instance()->lw232CanSpeedSelection = defaultCanSpeed;
     instance()->lw232McpModuleClock = clock;
@@ -72,16 +46,16 @@ void Can232::serialEvent() {
 
 void Can232::initFunc() {
     if (!inputString.reserve(LW232_INPUT_STRING_BUFFER_SIZE)) {
-        dbg0("inputString.reserve failed in initFunc. less optimal String work is expected");
+        Logger.println("inputString.reserve failed in initFunc. less optimal String work is expected");
     }
     // lw232AutoStart = true; //todo: read from eeprom
     // lw232AutoPoll = false; //todo: read from eeprom
     //  lw232TimeStamp = //read from eeprom
     //    lw232Message[0] = 'Z';    lw232Message[1] = '1'; exec();
     //if (lw232AutoStart) {
-        inputString = "O\0x0D";
-        stringComplete = true;
-        loopFunc();
+    //    inputString = "O\0x0D";
+    //    stringComplete = true;
+    //    loopFunc();
     //}
 }
 
@@ -103,7 +77,7 @@ void Can232::loopFunc() {
     if (lw232CanChannelMode != LW232_STATUS_CAN_CLOSED) {
         int recv = 0;
         while (CAN_MSGAVAIL == checkReceive() && recv++<5) {
-            dbg0('+');
+            Logger.print('+');
             if (CAN_OK == receiveSingleFrame()) {
                 Serial.write(LW232_CR);
             }
@@ -122,7 +96,8 @@ void Can232::serialEventFunc() {
 }
 
 INT8U Can232::exec() {
-    dbg2("Command received:", inputString);
+    Logger.print("Command received:");
+    Logger.println(inputString);
     lw232LastErr = parseAndRunCommand();
     switch (lw232LastErr) {
     case LW232_OK:
@@ -519,15 +494,12 @@ void Can232::parseCanExtId() {
 void HexHelper::printFullByte(INT8U b) {
     if (b < 0x10) {
         Serial.print('0');
-       // dbg0('0');
     }
     Serial.print(b, HEX);
-    //dbgH(b);
 }
 
 void HexHelper::printNibble(INT8U b) {
     Serial.print(b & 0x0F, HEX);
-    //dbgH(b & 0x0F);
 }
 
 

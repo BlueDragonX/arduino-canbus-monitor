@@ -72,15 +72,14 @@ For other distros please follow respective instructions, start from here https:/
 
 ### Create CAN device
 ```
-sudo slcan_attach -f -s4 -o /dev/ttyUSB0
-sudo slcand -S 115200 /dev/ttyUSB0 can0  
-sudo ifconfig can0 up
+sudo slcand -o -c -s6 -S 115200 /dev/ttyAMC0 slcan0
+sudo ip link slcan0 up
 ```
-where 115200 is port speed, `/dev/ttyUSB0` - name of your arduino device. can be different 
+where 115200 is port speed, `/dev/ttyAMC0` - name of your arduino device. can be different 
 
 ### To dump running traffic 
 ```
-candump can0
+candump slcan0
 ```
 
 ### To delete CAN device

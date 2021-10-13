@@ -27,6 +27,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <inttypes.h>
+#include "debug.h"
 
 #ifndef INT32U
 #define INT32U unsigned long
@@ -37,7 +38,7 @@
 #endif
 
 // if print debug information
-#define DEBUG_MODE 0
+#define DEBUG_MODE 1
 
 /*
  *   Begin mt
