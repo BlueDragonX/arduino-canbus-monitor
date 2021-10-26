@@ -68,4 +68,3 @@ void loop() {
 void serialEvent() {
     Can232::serialEvent();
 }
-}
